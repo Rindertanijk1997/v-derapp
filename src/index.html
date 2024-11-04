@@ -7,12 +7,22 @@
     <title>Väder App</title>
 </head>
 <body>
-    <section class="app">
+    <header class="app-header">
         <h1>Väder App</h1>
-        <input type="text" id="city-input" placeholder="Ange stad">
-        <button id="fetch-weather">Hämta Väder</button>
+        <div class="search-container">
+            <input type="text" id="city-input" placeholder="Ange stad">
+            <button id="fetch-weather">Hämta Väder</button>
+        </div>
+    </header>
+    <section class="app">
+        <div id="preset-weather" class="weather-grid"></div>
         <div id="weather-info"></div>
     </section>
+    <div id="overlay" class="overlay">
+        <div class="overlay-content" id="overlay-content">
+            <button id="close-overlay">Stäng</button>
+        </div>
+    </div>
     <script type="module" src="/dist/app.js"></script>
 </body>
 </html>

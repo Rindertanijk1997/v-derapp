@@ -1,65 +1,139 @@
-/* Basinställningar för body */
 body {
     margin: 0;
-    height: 100vh; /* Täcker hela skärmhöjden */
-    width: 100vw; /* Täcker hela skärmbredden */
+    height: 100vh;
+    width: 100vw;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    transition: background-color 0.5s ease; /* Mjuk övergång för färgändring */
-    color: #333; /* Mörk text för bättre kontrast */
-    font-family: 'Merriweather', serif; /* Elegant font */
+    justify-content: flex-start;
+    transition: background-color 0.5s ease;
+    color: #333;
+    font-family: 'Merriweather', serif;
+    background: linear-gradient(to bottom, #e0f7fa, #80deea); /* Grundläggande bakgrundsfärg */
 }
 
-
-.app {
-    max-width: 600px;
-    margin: auto;
+.app-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 20px;
-    background-color: rgba(255, 255, 255, 0.9); 
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    text-align: center;
+    background-color: #0d47a1;
+    color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    border-bottom: 4px solid #f57c00; /* Tydlig avskiljning av headern */
 }
-
 
 h1 {
-    color: #0d47a1; 
+    font-size: 28px; /* Större rubrik för en mer imponerande känsla */
 }
 
+.search-container {
+    display: flex;
+    justify-content: center;
+    width: 50%;
+}
 
 input, button {
     width: 100%;
     padding: 10px;
     margin-top: 10px;
-    border: 2px solid #0d47a1;
+    border: none;
     border-radius: 4px;
+    font-size: 16px; /* Tydligare textstorlek */
 }
 
+input {
+    border: 2px solid #0d47a1;
+    margin-right: 10px; /* Utrymme mellan input och knapp */
+    transition: border 0.3s; /* Övergångseffekt för input */
+}
+
+input:focus {
+    border-color: #f57c00; /* Färgändring vid fokus */
+}
 
 button {
-    background-color: #0d47a1; 
+    background-color: #f57c00;
     color: white;
+    font-weight: bold;
+    cursor: pointer; /* Ändra muspekaren till pekande hand */
+    transition: background-color 0.3s; /* Övergångseffekt för knapp */
 }
-
 
 button:hover {
-    background-color: #1565c0; 
+    background-color: #ef6c00; /* Mörkare färg vid hover */
+}
+
+.app {
+    max-width: 600px;
+    margin: 20px auto; /* Lägger till marginal ovanför appen */
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.weather-grid {
+    display: flex;
+    flex-direction: column; /* Kolumnlayout för väderboxarna */
+    align-items: center;
+    width: 100%;
+    gap: 20px; /* Ger lite utrymme mellan varje väderbox */
+}
+
+.weather-box {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    width: 80%; /* Justera bredden på varje väderbox */
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s; /* Lägg till övergångar för effekter */
+}
+
+.weather-box:hover {
+    transform: translateY(-5px); /* Gör boxen lite mer levande vid hover */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Större skugga vid hover */
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8); /* Mörk overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Se till att overlayn ligger över andra element */
+}
+
+.overlay-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    animation: fadeIn 0.3s; /* Lägger till en fade-in effekt för overlayen */
 }
 
 
+/* Bakgrundseffekter baserat på väder */
 body.sunny {
-    background: linear-gradient(to bottom, #fff, #90caf9); 
+    background: linear-gradient(to bottom, #fff, #90caf9);
 }
 
 body.cloudy {
-    background: linear-gradient(to bottom, #d1d1d1, #959595); 
+    background: linear-gradient(to bottom, #d1d1d1, #959595);
 }
 
 body.rainy {
-    background: linear-gradient(to bottom, #bababa, #5d5d5d); 
+    background: linear-gradient(to bottom, #bababa, #5d5d5d);
 }
 
 body.snowy {
-    background: linear-gradient(to bottom, #fff, #e0f7fa); 
+    background: linear-gradient(to bottom, #fff, #e0f7fa);
 }
