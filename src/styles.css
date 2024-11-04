@@ -1,0 +1,65 @@
+/* Basinställningar för body */
+body {
+    margin: 0;
+    height: 100vh; /* Täcker hela skärmhöjden */
+    width: 100vw; /* Täcker hela skärmbredden */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.5s ease; /* Mjuk övergång för färgändring */
+    color: #333; /* Mörk text för bättre kontrast */
+    font-family: 'Merriweather', serif; /* Elegant font */
+}
+
+
+.app {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9); 
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+
+h1 {
+    color: #0d47a1; 
+}
+
+
+input, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 2px solid #0d47a1;
+    border-radius: 4px;
+}
+
+
+button {
+    background-color: #0d47a1; 
+    color: white;
+}
+
+
+button:hover {
+    background-color: #1565c0; 
+}
+
+
+body.sunny {
+    background: linear-gradient(to bottom, #fff, #90caf9); 
+}
+
+body.cloudy {
+    background: linear-gradient(to bottom, #d1d1d1, #959595); 
+}
+
+body.rainy {
+    background: linear-gradient(to bottom, #bababa, #5d5d5d); 
+}
+
+body.snowy {
+    background: linear-gradient(to bottom, #fff, #e0f7fa); 
+}
