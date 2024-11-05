@@ -104,10 +104,13 @@ button:hover {
     height: 70px;
     width: 500px; /* Gör väderboxarna bredare */
     display: flex;
-    justify-content: center;
+    flex-wrap: wrap; /* Gör så att innehållet kan radbrytas */
+    justify-content: space-between; /* Justera utrymmet mellan elementen */
     align-items: center;
     transition: transform 0.3s, box-shadow 0.3s;
+    padding: 10px; /* Lägg till lite padding för bättre utrymme */
 }
+
 
 .weather-box:hover {
     transform: translateY(-5px);
@@ -128,19 +131,20 @@ button:hover {
 }
 
 .overlay-content {
-    background: rgba(255, 255, 255, 0.9);
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
     text-align: center;
-    color: #4d4d4d;
-
-    width: 40vw; 
-    max-width: 300px; 
-    height: 35vh; 
-    max-height: 250px; 
-    overflow: auto;
+    color: #333;
+    max-width: 500px; /* Justera storleken på overlayn om det behövs */
+    margin: auto; /* Centrera overlayinnehållet */
 }
+
+/* Styla prognosen */
+#overlay-description div {
+    margin: 10px 0; /* Mellanslag mellan prognoser */
+}
+
 
 
 body.sunny {
