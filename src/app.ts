@@ -82,16 +82,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function displayOverlay(weatherData: WeatherData, forecastData: any): void {
         if (weatherData) {
-            // Uppdatera overlay-innehållet
+            
             (document.getElementById('overlay-title') as HTMLHeadingElement).textContent = weatherData.name;
             (document.getElementById('overlay-temperature') as HTMLParagraphElement).textContent = `Temperatur: ${weatherData.main.temp} °C, Känns som: ${weatherData.main.feels_like} °C`;
 
             // Lägg till prognosinformation
             const forecastHTML = forecastData.list
-                .filter((forecast: any, index: number) => index % 8 === 0) // Filtrera för att få varannan (var 8:e, varje 3:e timme)
-                .slice(0, 5) // Ta de första fem
+                .filter((forecast: any, index: number) => index % 8 === 0) 
+                .slice(0, 5) 
                 .map((forecast: any) => {
-                    const date = new Date(forecast.dt * 1000); // Konvertera Unix-tid till datum
+                    const date = new Date(forecast.dt * 1000); 
                     return `
                         <div>
                             <strong>${date.toLocaleDateString()}</strong>

@@ -138,8 +138,12 @@ button:hover {
 }
 
 #overlay-description div {
-    margin: 10px 0;
+    padding: 10px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
+
+
 
 @media (max-width: 600px) {
     h1 {
