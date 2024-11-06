@@ -1,4 +1,4 @@
-import { WeatherData } from './types';
+import { WeatherData, ForecastData } from './types';
 
 const apiKey = '757f7c0291760953b1051b6100356250';
 
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // hämta väderdata från OpenWeatherMap API
+    // Hämtar väderdata från OpenWeatherMap API
     async function fetchWeather(city: string): Promise<WeatherData | null> {
         const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
@@ -45,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Error fetching weather data:', response.statusText);
                 return null;
             }
-            // Returnera väderdata om det lyckades
             return await response.json() as WeatherData;
         } catch (error) {
             console.error(`Error: ${error}`);
@@ -53,8 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // hämta väderprognos från OpenWeatherMap API (5-dagars prognos)
-    async function fetchForecast(city: string): Promise<WeatherData[] | null> {
+    // Hämtar väderprognos från OpenWeatherMap API (5-dagars prognos)
+    async function fetchForecast(city: string): Promise<ForecastData[] | null> {
         const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
 
         try {
@@ -64,18 +63,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 return null;
             }
             const data = await response.json();
-            // Filtrera listan för att endast visa en prognos per dag (var 8:e timme)
-            return data.list.filter((_: any, index: number) => index % 8 === 0).slice(0, 5);
+            return data.list.filter((_: any, index: number) => index % 8 === 0).slice(0, 5) as ForecastData[];
         } catch (error) {
             console.error(`Error: ${error}`);
             return null; // Om ett fel inträffar, returnera null
         }
     }
 
-    // visar väderinformation för förinställda städer
+    // Visar väderinformation för förinställda städer
     function displayPresetWeather(data: WeatherData): void {
-        const weatherDiv = document.createElement('div'); // Skapa ett nytt div-element för väderinformation
-        weatherDiv.className = 'weather-box'; // Lägg till en klass för styling
+        const weatherDiv = document.createElement('div');
+        weatherDiv.className = 'weather-box';
         weatherDiv.innerHTML = `
             <h3>${data.name}</h3>
             <p>Temperatur: ${data.main.temp} °C</p>
@@ -84,16 +82,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Lägg till en klickhändelse för att visa mer information om staden när man klickar på väderboxen
         weatherDiv.addEventListener('click', async () => {
-            const forecastData = await fetchForecast(data.name); // Hämta prognos för staden
-            displayOverlay(data, forecastData); // Visa prognos i overlay
+            const forecastData = await fetchForecast(data.name);
+            displayOverlay(data, forecastData);
         });
 
-        // Lägg till det nya väderelementet i HTML-dokumentet
         document.getElementById('preset-weather')?.appendChild(weatherDiv);
     }
 
-    // visa väderinformation och prognos i ett overlay
-    function displayOverlay(data: WeatherData, forecast: WeatherData[] | null): void {
+    // Visa väderinformation och prognos i ett overlay
+    function displayOverlay(data: WeatherData, forecast: ForecastData[] | null): void {
         document.getElementById('overlay-title')!.textContent = data.name;
         document.getElementById('overlay-temperature')!.textContent = `Temperatur: ${data.main.temp} °C, Känns som: ${data.main.feels_like} °C`;
 
@@ -108,7 +105,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('overlay-content')!.appendChild(forecastDiv);
         }
 
-        // Gör overlay synligt
         overlay.style.display = 'flex';
     }
 
