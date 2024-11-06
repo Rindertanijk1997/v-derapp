@@ -2,7 +2,9 @@ import { WeatherData } from './types';
 
 const apiKey = '757f7c0291760953b1051b6100356250';
 
+// Vänta tills dokumentet är laddat innan vi kör JavaScript-koden
 document.addEventListener('DOMContentLoaded', () => {
+    // Hämta HTML-elementen som vi kommer att interagera med
     const cityInput = document.getElementById('city-input') as HTMLInputElement;
     const fetchWeatherButton = document.getElementById('fetch-weather') as HTMLButtonElement;
     const overlay = document.getElementById('overlay') as HTMLDivElement;
@@ -10,24 +12,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const presetCities = ['Stockholm', 'New York', 'Tokyo', 'Kapstaden', 'Sydney'];
 
+    // Hämtar och visa väder för varje förinställd stad
     presetCities.forEach(async (city) => {
         const weatherData = await fetchWeather(city);
         if (weatherData) {
-            displayPresetWeather(weatherData);
+            displayPresetWeather(weatherData); // Visar väder för staden i gränssnittet
         }
     });
 
+    // Hämta väder när användaren klickar på "fetch-weather" knappen
     fetchWeatherButton.addEventListener('click', async () => {
-        const city = cityInput.value;
+        const city = cityInput.value; // Läs in användarens stad
         if (city) {
+            // Hämta väderdata för den staden
             const weatherData = await fetchWeather(city);
             if (weatherData) {
+                // Hämta en väderprognos för staden om vädret är tillgängligt
                 const forecastData = await fetchForecast(city);
+                // Visa väder och prognos i ett overlay-fönster
                 displayOverlay(weatherData, forecastData);
             }
         }
     });
 
+    // hämta väderdata från OpenWeatherMap API
     async function fetchWeather(city: string): Promise<WeatherData | null> {
         const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
@@ -37,15 +45,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Error fetching weather data:', response.statusText);
                 return null;
             }
-            const data: WeatherData = await response.json();
-            return data;
+            // Returnera väderdata om det lyckades
+            return await response.json() as WeatherData;
         } catch (error) {
             console.error(`Error: ${error}`);
-            return null;
+            return null; // Om ett fel inträffar, returnera null
         }
     }
 
-    async function fetchForecast(city: string): Promise<any | null> {
+    // hämta väderprognos från OpenWeatherMap API (5-dagars prognos)
+    async function fetchForecast(city: string): Promise<WeatherData[] | null> {
         const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
 
         try {
@@ -55,65 +64,57 @@ document.addEventListener('DOMContentLoaded', () => {
                 return null;
             }
             const data = await response.json();
-            return data;
+            // Filtrera listan för att endast visa en prognos per dag (var 8:e timme)
+            return data.list.filter((_: any, index: number) => index % 8 === 0).slice(0, 5);
         } catch (error) {
             console.error(`Error: ${error}`);
-            return null;
+            return null; // Om ett fel inträffar, returnera null
         }
     }
 
+    // visar väderinformation för förinställda städer
     function displayPresetWeather(data: WeatherData): void {
-        const weatherDiv = document.createElement('div');
-        weatherDiv.className = 'weather-box';
+        const weatherDiv = document.createElement('div'); // Skapa ett nytt div-element för väderinformation
+        weatherDiv.className = 'weather-box'; // Lägg till en klass för styling
         weatherDiv.innerHTML = `
             <h3>${data.name}</h3>
             <p>Temperatur: ${data.main.temp} °C</p>
             <p>Känns som: ${data.main.feels_like} °C</p>
         `;
 
-        // Lägg till klickhändelse för att visa overlay
+        // Lägg till en klickhändelse för att visa mer information om staden när man klickar på väderboxen
         weatherDiv.addEventListener('click', async () => {
-            const forecastData = await fetchForecast(data.name);
-            displayOverlay(data, forecastData);
+            const forecastData = await fetchForecast(data.name); // Hämta prognos för staden
+            displayOverlay(data, forecastData); // Visa prognos i overlay
         });
 
+        // Lägg till det nya väderelementet i HTML-dokumentet
         document.getElementById('preset-weather')?.appendChild(weatherDiv);
     }
 
-    function displayOverlay(weatherData: WeatherData, forecastData: any): void {
-        if (weatherData) {
-            
-            (document.getElementById('overlay-title') as HTMLHeadingElement).textContent = weatherData.name;
-            (document.getElementById('overlay-temperature') as HTMLParagraphElement).textContent = `Temperatur: ${weatherData.main.temp} °C, Känns som: ${weatherData.main.feels_like} °C`;
+    // visa väderinformation och prognos i ett overlay
+    function displayOverlay(data: WeatherData, forecast: WeatherData[] | null): void {
+        document.getElementById('overlay-title')!.textContent = data.name;
+        document.getElementById('overlay-temperature')!.textContent = `Temperatur: ${data.main.temp} °C, Känns som: ${data.main.feels_like} °C`;
 
-            // Lägg till prognosinformation
-            const forecastHTML = forecastData.list
-                .filter((forecast: any, index: number) => index % 8 === 0) 
-                .slice(0, 5) 
-                .map((forecast: any) => {
-                    const date = new Date(forecast.dt * 1000); 
-                    return `
-                        <div>
-                            <strong>${date.toLocaleDateString()}</strong>
-                            <p>Temperatur: ${forecast.main.temp} °C</p>
-                        </div>
-                    `;
-                }).join('');
-
-            // Lägg till prognos till overlayn
-            document.getElementById('overlay-description')!.innerHTML = forecastHTML;
-
-            overlay.style.display = 'flex'; // Visa overlay
+        // Om prognosdata finns, skapa och visa prognosen
+        if (forecast) {
+            const forecastDiv = document.createElement('div');
+            forecast.forEach((day) => {
+                const dayDiv = document.createElement('p');
+                dayDiv.textContent = `${day.main.temp} °C (Känns som ${day.main.feels_like} °C)`;
+                forecastDiv.appendChild(dayDiv);
+            });
+            document.getElementById('overlay-content')!.appendChild(forecastDiv);
         }
+
+        // Gör overlay synligt
+        overlay.style.display = 'flex';
     }
 
+    // Stäng overlay när man klickar på stäng-knappen
     closeOverlayButton.addEventListener('click', () => {
-        overlay.style.display = 'none'; // Dölj overlay
-    });
-
-    overlay.addEventListener('click', (event) => {
-        if (event.target === overlay) {
-            overlay.style.display = 'none'; // Dölj overlay om man klickar utanför innehållet
-        }
+        overlay.style.display = 'none'; // Döljer overlay
+        document.getElementById('overlay-content')!.innerHTML = ''; // Rensa prognosen när overlay stängs
     });
 });
