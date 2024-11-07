@@ -1,55 +1,103 @@
 const apiKey = '757f7c0291760953b1051b6100356250';
-const weatherInfoDiv = document.getElementById('weather-info');
-const cityInput = document.getElementById('city-input');
-const fetchWeatherButton = document.getElementById('fetch-weather');
-fetchWeatherButton.addEventListener('click', async () => {
-    const city = cityInput.value;
-    if (city) {
-        localStorage.setItem('lastCity', city);
+document.addEventListener('DOMContentLoaded', () => {
+    const cityInput = document.getElementById('city-input');
+    const fetchWeatherButton = document.getElementById('fetch-weather');
+    const overlay = document.getElementById('overlay');
+    const closeOverlayButton = document.getElementById('close-overlay');
+    const presetCities = ['Stockholm', 'New York', 'Tokyo', 'Kapstaden', 'Sydney'];
+    presetCities.forEach(async (city) => {
         const weatherData = await fetchWeather(city);
-        displayWeather(weatherData);
+        if (weatherData) {
+            displayPresetWeather(weatherData);
+        }
+    });
+    fetchWeatherButton.addEventListener('click', async () => {
+        const city = cityInput.value;
+        if (city) {
+            const weatherData = await fetchWeather(city);
+            if (weatherData) {
+                const forecastData = await fetchForecast(city);
+                displayOverlay(weatherData, forecastData);
+            }
+        }
+    });
+    async function fetchWeather(city) {
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                console.error('Error fetching weather data:', response.statusText);
+                return null;
+            }
+            const data = await response.json();
+            return data;
+        }
+        catch (error) {
+            console.error(`Error: ${error}`);
+            return null;
+        }
     }
+    async function fetchForecast(city) {
+        const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                console.error('Error fetching forecast data:', response.statusText);
+                return null;
+            }
+            const data = await response.json();
+            return data;
+        }
+        catch (error) {
+            console.error(`Error: ${error}`);
+            return null;
+        }
+    }
+    function displayPresetWeather(data) {
+        var _a;
+        const weatherDiv = document.createElement('div');
+        weatherDiv.className = 'weather-box';
+        weatherDiv.innerHTML = `
+            <h3>${data.name}</h3>
+            <p>Temperatur: ${data.main.temp} °C</p>
+            <p>Känns som: ${data.main.feels_like} °C</p>
+        `;
+        // Lägg till klickhändelse för att visa overlay
+        weatherDiv.addEventListener('click', async () => {
+            const forecastData = await fetchForecast(data.name);
+            displayOverlay(data, forecastData);
+        });
+        (_a = document.getElementById('preset-weather')) === null || _a === void 0 ? void 0 : _a.appendChild(weatherDiv);
+    }
+    function displayOverlay(weatherData, forecastData) {
+        if (weatherData) {
+            document.getElementById('overlay-title').textContent = weatherData.name;
+            document.getElementById('overlay-temperature').textContent = `Temperatur: ${weatherData.main.temp} °C, Känns som: ${weatherData.main.feels_like} °C`;
+            // Lägg till prognosinformation
+            const forecastHTML = forecastData.list
+                .filter((forecast, index) => index % 8 === 0)
+                .slice(0, 5)
+                .map((forecast) => {
+                const date = new Date(forecast.dt * 1000);
+                return `
+                        <div>
+                            <strong>${date.toLocaleDateString()}</strong>
+                            <p>Temperatur: ${forecast.main.temp} °C</p>
+                        </div>
+                    `;
+            }).join('');
+            // Lägg till prognos till overlayn
+            document.getElementById('overlay-description').innerHTML = forecastHTML;
+            overlay.style.display = 'flex'; // Visa overlay
+        }
+    }
+    closeOverlayButton.addEventListener('click', () => {
+        overlay.style.display = 'none'; // Dölj overlay
+    });
+    overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) {
+            overlay.style.display = 'none'; // Dölj overlay om man klickar utanför innehållet
+        }
+    });
 });
-async function fetchWeather(city) {
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`);
-    if (!response.ok) {
-        throw new Error('Något gick fel när vädret skulle hämtas.');
-    }
-    const data = await response.json();
-    return data;
-}
-function updateBackground(weatherDescription) {
-    document.body.classList.remove("sunny", "cloudy", "rainy", "snowy");
-    if (weatherDescription.includes("sun") || weatherDescription.includes("clear sky")) {
-        document.body.classList.add("sunny");
-    }
-    else if (weatherDescription.includes("cloud")) {
-        document.body.classList.add("cloudy");
-    }
-    else if (weatherDescription.includes("rain") || weatherDescription.includes("drizzle")) {
-        document.body.classList.add("rainy");
-    }
-    else if (weatherDescription.includes("snow")) {
-        document.body.classList.add("snowy");
-    }
-    else {
-        document.body.classList.add("cloudy");
-    }
-}
-function displayWeather(data) {
-    const description = data.weather.length > 0 ? data.weather[0].description : "Ingen beskrivning tillgänglig";
-    updateBackground(description.toLowerCase());
-    weatherInfoDiv.innerHTML = `
-        <h2>Väder för ${data.name}</h2>
-        <p>Temperatur: ${data.main.temp} °C</p>
-        <p>Beskrivning: ${description}</p>
-    `;
-}
-window.onload = () => {
-    const lastCity = localStorage.getItem('lastCity');
-    if (lastCity) {
-        cityInput.value = lastCity;
-        fetchWeather(lastCity).then(displayWeather);
-    }
-};
 export {};

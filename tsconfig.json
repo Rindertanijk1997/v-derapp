@@ -1,18 +1,22 @@
 {
     "compilerOptions": {
-        "target": "ES2017",  // Uppdaterad för bättre stöd för async/await
-        "module": "ES6",
-        "strict": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "outDir": "./dist",
-        "rootDir": "./src",
-        "moduleResolution": "node",  // Lägg till detta för bättre upplösning av moduler
-        "resolveJsonModule": true,  // Om du behöver importera .json filer
-        "lib": ["DOM", "ES2017", "DOM.Iterable"],  // Specificera vilka bibliotek som ska inkluderas
-        "allowJs": true  // Om du vill tillåta JS filer i ditt TypeScript-projekt
-    },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules"]
-}
+    
+      "target": "ES2023",  /* Sätt den JavaScript-version som ska användas för den genererade JavaScript-koden och inkludera kompatibla bibliotek. */
+    
+      "module": "ES6",  /* Ange vilken typ av modulkod som ska genereras. */
+      "moduleResolution": "node",  /* Ange hur TypeScript letar upp filer från en given modul-specifikation. */
+      "rootDir": "./src",  /* Ange rotmappen för dina källfiler. */
+  
+      "allowJs": true,  /* Tillåt att JavaScript-filer är en del av ditt program. */
+      "outDir": "./dist",  /* Ange en utmatningsmapp för alla genererade filer. */
+      "esModuleInterop": true,  /* Generera extra JavaScript för att underlätta import av CommonJS-moduler.*/
+    
+      "forceConsistentCasingInFileNames": true,  /* Se till att rätt stora och små bokstäver används i importsökvägar. */
+    
+      "strict": true,  /* Aktivera alla strikta typkontrollalternativ. */
+      "noUnusedLocals": true,  /* Visa fel om det finns oanvända lokala variabler. */
+      "noUnusedParameters": true,  /* Visa fel om det finns oanvända parametrar i funktioner. */
+    }
+  }
+  
+  
