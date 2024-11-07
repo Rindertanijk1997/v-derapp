@@ -161,8 +161,8 @@ button:hover {
         width: 90%;
         display: flex;
         flex-direction: column;
-        align-items: center; /* Centrerar horisontellt */
-        justify-content: center; /* Centrerar vertikalt */
+        align-items: center; 
+        justify-content: center; 
         margin-top: 10px;
     }
     
