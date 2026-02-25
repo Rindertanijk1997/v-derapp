@@ -1,31 +1,57 @@
-// Typ för väderdata som hämtas från OpenWeatherMap API
+// ── Nuvarande väder (returnerat från appen) ──────────────────────────────────
 export interface WeatherData {
-    name: string;
+    name:       string;
+    country:    string;
+    timezone:   number;     // sekunder från UTC
     main: {
-        temp: number;
+        temp:       number;
         feels_like: number;
+        humidity:   number;
+        pressure:   number;
     };
+    weather: {
+        description: string;
+        icon:        string;
+        id:          number;
+    }[];
+    wind:       { speed: number };
+    visibility: number;
+    uvi:        number;
 }
 
-// Typ för varje väderprognos (en del av den 5-dagarsprognos som hämtas från API)
+// ── OWM /weather API-svar ────────────────────────────────────────────────────
+export interface WeatherResponse {
+    name:     string;
+    timezone: number;
+    sys:      { country: string };
+    main: {
+        temp:       number;
+        feels_like: number;
+        humidity:   number;
+        pressure:   number;
+    };
+    weather:  { description: string; icon: string; id: number }[];
+    wind:     { speed: number };
+    visibility: number;
+}
+
+// ── OWM /forecast dagsvärde ──────────────────────────────────────────────────
 export interface ForecastData {
+    dt_txt: string;
     main: {
-        temp: number;
+        temp:       number;
         feels_like: number;
+        temp_min?:  number;
+        temp_max?:  number;
     };
-    dt_txt: string;  // Tidsstämpel för varje väderprognos
+    weather?: { description: string; icon: string; id: number }[];
+    pop?:     number;   // sannolikhet för nederbörd 0–1
 }
 
-// Typ för själva API-svaret när man hämtar prognosen (inklusive listan med prognoser)
+// ── Timprognos (samma struktur som ForecastData) ─────────────────────────────
+export type HourlyData = ForecastData;
+
+// ── OWM /forecast API-svar ───────────────────────────────────────────────────
 export interface ForecastResponse {
     list: ForecastData[];
-}
-
-// Typ för det globala väderresponset (nuvarande väder)
-export interface WeatherResponse {
-    main: {
-        temp: number;
-        feels_like: number;
-    };
-    name: string;
 }

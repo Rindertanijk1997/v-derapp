@@ -1,35 +1,144 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>Väder App</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Väder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <header class="app-header">
-        <h1>VäderApp</h1>
-        <div class="search-container">
-            <input type="text" id="city-input" placeholder="Ange stad">
-            <button id="fetch-weather">Hämta Väder</button>
+
+  <!-- Animerad bakgrund -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header__logo">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/>
+        <circle cx="12" cy="9" r="2.5"/>
+      </svg>
+      <span>VÄDER</span>
+    </div>
+
+    <div class="search-wrap">
+      <form id="searchForm" autocomplete="off">
+        <div class="search-box" id="searchBox">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input id="city-input" type="text" placeholder="Sök stad…" />
+          <button type="submit" class="search-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </button>
         </div>
-    </header>
-    <section class="app">
-        <section id="weather-info">
-            <h2 id="weather-title"></h2>
-            <p id="temperature"></p>
-        </section>
-        <section id="preset-weather" class="weather-grid"></section>
+      </form>
+    </div>
+
+    <button class="unit-toggle" id="unitToggle" title="Byt enhet">°C / °F</button>
+  </header>
+
+  <!-- MAIN HERO: Sökt stad -->
+  <main class="main">
+    <section class="hero-card glass" id="heroCard" style="display:none">
+      <div class="hero-card__top">
+        <div class="hero-card__location">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/>
+            <circle cx="12" cy="9" r="2.5"/>
+          </svg>
+          <span id="hero-city">–</span>
+          <span id="hero-country" class="hero-card__country"></span>
+        </div>
+        <div class="hero-card__time" id="hero-time"></div>
+      </div>
+
+      <div class="hero-card__center">
+        <div class="hero-card__icon" id="hero-icon"></div>
+        <div class="hero-card__temp-wrap">
+          <span class="hero-card__temp" id="hero-temp">–</span>
+          <span class="hero-card__unit">°<span id="hero-unit">C</span></span>
+        </div>
+      </div>
+
+      <div class="hero-card__desc" id="hero-desc">–</div>
+
+      <div class="hero-card__stats">
+        <div class="stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+          <span class="stat__label">Känns som</span>
+          <span class="stat__val" id="hero-feels">–</span>
+        </div>
+        <div class="stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+          <span class="stat__label">Luftfuktighet</span>
+          <span class="stat__val" id="hero-humidity">–</span>
+        </div>
+        <div class="stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
+          <span class="stat__label">Vind</span>
+          <span class="stat__val" id="hero-wind">–</span>
+        </div>
+        <div class="stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span class="stat__label">Sikt</span>
+          <span class="stat__val" id="hero-visibility">–</span>
+        </div>
+        <div class="stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/></svg>
+          <span class="stat__label">UV-index</span>
+          <span class="stat__val" id="hero-uv">–</span>
+        </div>
+        <div class="stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <span class="stat__label">Lufttryck</span>
+          <span class="stat__val" id="hero-pressure">–</span>
+        </div>
+      </div>
+
+      <!-- 5-dygnsprognos -->
+      <div class="forecast-wrap">
+        <div class="forecast-title">5-dygnsprognos</div>
+        <div class="forecast-row" id="forecast-row"></div>
+      </div>
+
+      <!-- Timprognos (nästa 8 timmar) -->
+      <div class="forecast-wrap">
+        <div class="forecast-title">Timprognos</div>
+        <div class="hourly-row" id="hourly-row"></div>
+      </div>
+
     </section>
-    <section id="overlay" class="overlay">
-        <section class="overlay-content" id="overlay-content">
-            <h2 id="overlay-title"></h2>
-            <p id="overlay-temperature"></p>
-            <section id="overlay-description"></section>
-            <button id="close-overlay">Stäng</button>
-        </section>
-    </section>
-    <script type="module" src="/dist/app.js"></script>
+
+    <!-- Söker-loader -->
+    <div class="loader-wrap" id="loader" style="display:none">
+      <div class="loader-ring"></div>
+      <p>Hämtar väder…</p>
+    </div>
+
+    <!-- Felmeddelande -->
+    <div class="error-card glass" id="errorCard" style="display:none">
+      <span>😕</span>
+      <p id="errorMsg">Staden hittades inte.</p>
+    </div>
+
+    <!-- PRESET STÄDER -->
+    <div class="preset-section">
+      <div class="preset-label">Populära städer</div>
+      <div class="preset-grid" id="preset-weather"></div>
+    </div>
+
+  </main>
+
+  <script type="module" src="../dist/app.js"></script>
 </body>
 </html>
-
